@@ -1,0 +1,1 @@
+function [] = putimageonscreen(picture);if max(max(picture)) <= 1,    picture = picture .* 255;endimagesc(picture,[0 255]);axis equal;axis offcolormap(gray);

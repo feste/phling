@@ -1,0 +1,1 @@
+function M = orisinuswave(vhdim,ncycles,ori);ori = pi/180*ori;lambda = vhdim/ncycles;[X, Y] = meshgrid(-vhdim/2+0.5:1:vhdim/2-0.5,-vhdim/2+0.5:1:vhdim/2-0.5);M = .5 + .5 * sin(2*pi*(X.*cos(ori)+Y.*sin(ori) )/lambda);radimap = sqrt(X.^2+Y.^2);qout = radimap>vhdim/2;M(qout) = .5;

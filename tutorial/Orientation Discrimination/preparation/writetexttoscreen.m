@@ -1,0 +1,1 @@
+function [] = writetexttoscreen(w,text,screenrect);textwidth = Screen(w,'textwidth',text);x = screenrect(3)/2 - textwidth/2;y = screenrect(4)/2;Screen(w,'DrawText',text,[x],[y],255);
