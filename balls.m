@@ -46,18 +46,21 @@ function [] = balls(lag, cond, speed, radius)
       % Do initial flip...
       vbl=Screen('Flip', w);
       
+      vertbound = 300;
+      horizbound = 500;
+      
       %vertical versus horizontal
       if strcmp(cond, 'cause')
-          firstBallStart = [-1000, 0];
+          firstBallStart = [-horizbound, 0];
           secondBallStart = [0,0];
           change = [speed; 0; speed; 0];
-      elseif strcmp(cond, 'cause-vert')
-          firstBallStart = [0,-500];
+      elseif strcmp(cond, 'vert')
+          firstBallStart = [0,-vertbound];
           secondBallStart = [0,0];
           change = [0; speed; 0; speed];
       elseif strcmp(cond, 'no-cause')
-          firstBallStart = [-1000, -300];
-          secondBallStart = [600,0];
+          firstBallStart = [-horizbound, -vertbound];
+          secondBallStart = [horizbound,0];
           change = [speed; 0; speed; 0];
       end
       
@@ -74,11 +77,14 @@ function [] = balls(lag, cond, speed, radius)
       % animation loop
       % --------------
       for i = 1:nframes
-          if (i>1)
-              if ~(strcmp(cond, 'no-cause') && secondBallCoord(1) - ghostSecondBallCoord(1) < speed)
+          if (i>10)
+              noCause = strcmp(cond, 'no-cause');
+              beforeMidPoint = abs(secondBallCoord(1) - ghostSecondBallCoord(1)) < speed;
+              inBounds = inbounds(secondBallCoord, vertbound, horizbound, center, radius);
+              if ~(noCause && beforeMidPoint) && inBounds
                   if (hasHit == false)
                       firstBallCoord = firstBallCoord + change;
-                      vertCond = strcmp(cond, 'cause-vert');
+                      vertCond = strcmp(cond, 'vert');
                       vertTouch = abs(firstBallCoord(4) - secondBallCoord(2)) < speed;
                       horizTouch = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed;
                       if ((vertCond && vertTouch) || (~vertCond && horizTouch))
@@ -126,4 +132,19 @@ function coordinates = getCoord(center, ball_coord, radius)
                  center(2) + ball_coord(2) - radius;
                  center(1) + ball_coord(1) + radius;
                  center(2) + ball_coord(2) + radius];
+end
+
+function bool = inbounds(coord, vertbound, horizbound, center, radius)
+
+  rightbound = -horizbound + center(1);
+  leftbound = horizbound + center(1);
+  topbound = -vertbound + center(2);
+  bottombound = vertbound + center(2);
+  
+  right = coord(1) + radius >= rightbound;
+  left = coord(3) - radius <= leftbound;
+  top = coord(2) + radius >= topbound;
+  bottom = coord(4) - radius <= bottombound;
+  
+  bool = right && left && top && bottom;
 end
