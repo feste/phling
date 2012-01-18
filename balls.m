@@ -1,4 +1,20 @@
-function [] = balls()
+function [] = balls(lag, cond, speed, radius)
+
+  % Check number of inputs.
+  if nargin > 3
+    error('myfuns:somefun2:TooManyInputs', ...
+        'lag, speed, radius');
+  end
+  
+  % Fill in unset optional values.
+  switch nargin
+      case 2
+          speed = 5;
+          radius = 100;
+      case 3
+          radius = 100;
+  end
+
   AssertOpenGL;
   try
       waitframes = 1;
@@ -21,43 +37,66 @@ function [] = balls()
       
       black = BlackIndex(w);
       white = WhiteIndex(w);
+      red = [255 0 0];
+      blue = [0 0 255];
+      green = [0 255 0];
       HideCursor;	% Hide the mouse cursor
       Priority(MaxPriority(w));
       
       % Do initial flip...
       vbl=Screen('Flip', w);
       
-      d1_r = 50;
-      pos = -400;
-      nframes = 36000; % number of animation frames in loop
+      %vertical versus horizontal
+      if strcmp(cond, 'cause')
+          firstBallStart = [-1000, 0];
+          secondBallStart = [0,0];
+          change = [speed; 0; speed; 0];
+      elseif strcmp(cond, 'cause-vert')
+          firstBallStart = [0,-500];
+          secondBallStart = [0,0];
+          change = [0; speed; 0; speed];
+      elseif strcmp(cond, 'no-cause')
+          firstBallStart = [-1000, -300];
+          secondBallStart = [600,0];
+          change = [speed; 0; speed; 0];
+      end
       
-      d1_left = center(1)+pos-d1_r;
-      d1_top = center(2)-d1_r;
-      d1_right = center(1)+pos+d1_r;
-      d1_bottom = center(2)+d1_r;
+      nframes = 600; % number of animation frames in loop
       
-      d1_cord = [d1_left; d1_top; d1_right; d1_bottom];
-      d1_change = [2;0;2;0];
-      d2_change = [2;0;2;0];
-      d2_cord = [center(1)-d1_r; d1_top; center(1)+d1_r; d1_bottom];
+      firstBallCoord = getCoord(center, firstBallStart, radius);
+      secondBallCoord = getCoord(center, secondBallStart, radius);
+      ghostSecondBallCoord = getCoord(center, [0,0], radius);
       
-      has_hit = false;
+      hasHit = false;
+      lagCounter = 0;
       
       % --------------
       % animation loop
       % --------------
       for i = 1:nframes
           if (i>1)
-               if (has_hit == false)
-                   d1_cord = d1_cord + d1_change;
-                   if (d1_cord(3) == d2_cord(1))
-                       has_hit = true;
-                   end
-               else
-                   d2_cord = d2_cord + d2_change;
-               end
-              Screen('FillOval', w, uint8(white), d1_cord);
-              Screen('FillOval', w, uint8(white), d2_cord);
+              if ~(strcmp(cond, 'no-cause') && secondBallCoord(1) - ghostSecondBallCoord(1) < speed)
+                  if (hasHit == false)
+                      firstBallCoord = firstBallCoord + change;
+                      vertCond = strcmp(cond, 'cause-vert');
+                      vertTouch = abs(firstBallCoord(4) - secondBallCoord(2)) < speed;
+                      horizTouch = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed;
+                      if ((vertCond && vertTouch) || (~vertCond && horizTouch))
+                          hasHit = true;
+                      end
+                  else
+                      lagCounter = lagCounter + 1;
+                      if (lagCounter > lag)
+                          if strcmp(cond, 'no-cause')
+                              secondBallCoord = secondBallCoord - change;
+                          else
+                              secondBallCoord = secondBallCoord + change;
+                          end
+                      end
+                  end
+              end
+              Screen('FillOval', w, uint8(red), firstBallCoord);
+              Screen('FillOval', w, uint8(blue), secondBallCoord);
               Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
           end;
           [mx, my, buttons]=GetMouse(screenNumber);
@@ -80,4 +119,11 @@ function [] = balls()
       Screen('CloseAll');
       fprintf('you are in catch now\n');
   end
+end
+
+function coordinates = getCoord(center, ball_coord, radius)
+  coordinates = [center(1) + ball_coord(1) - radius;
+                 center(2) + ball_coord(2) - radius;
+                 center(1) + ball_coord(1) + radius;
+                 center(2) + ball_coord(2) + radius];
 end
