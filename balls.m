@@ -1,7 +1,12 @@
 function [] = balls(lag, cond, speed, radius)
 
+% lag is the number of frames for the lag in between balls moving.
+% cond is the condition.  so far i have made the conditions 'cause',
+%   'no-cause', and 'vert'.
+% speed and radius are optional arguments for the disks.
+
   % Check number of inputs.
-  if nargin > 3
+  if nargin > 4
     error('myfuns:somefun2:TooManyInputs', ...
         'lag, speed, radius');
   end
