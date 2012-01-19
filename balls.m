@@ -1,5 +1,11 @@
 function [] = balls(lag, cond, speed, radius)
 
+% to do: 
+%   switch colors when they pass going towards each other (vertical)
+%   color options so first and second balls can have colors switched
+%   ****beginning: dots stable.  then move on space press.
+%   
+
 % lag is the number of frames for the lag in between balls moving.
 % cond is the condition.  so far i have made the conditions 'cause',
 %   'no-cause', and 'vert'.
