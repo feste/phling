@@ -1,29 +1,70 @@
-function [] = balls(lag, cond, speed, radius)
+function [] = balls(lag, gap, cond, delay, speed, radius, color1, color2)
 
 % to do: 
 %   switch colors when they pass going towards each other (vertical)
-%   color options so first and second balls can have colors switched
-%   ****beginning: dots stable.  then move on space press.
-%   
+%   center no-cause balls
+%   spacebar to record segmentations
 
+% delay is number of frames before movement starts
+% gap is the number of pixels that separate the balls
+% color1 and color2 options are 'red', 'blue', 'green', and 'white'
 % lag is the number of frames for the lag in between balls moving.
 % cond is the condition.  so far i have made the conditions 'cause',
 %   'no-cause', and 'vert'.
 % speed and radius are optional arguments for the disks.
 
   % Check number of inputs.
-  if nargin > 4
+  if nargin > 8
     error('myfuns:somefun2:TooManyInputs', ...
         'lag, speed, radius');
   end
   
   % Fill in unset optional values.
   switch nargin
+      case 0
+          lag = 0;
+          gap = 0;
+          cond = 'cause';
+          delay = 50;
+          speed = 3;
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
+      case 1
+          gap = 0;
+          cond = 'cause';
+          delay = 50;
+          speed = 3;
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
       case 2
-          speed = 5;
-          radius = 100;
+          cond = 'cause';
+          delay = 50;
+          speed = 3;
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
       case 3
-          radius = 100;
+          delay = 50;
+          speed = 3;
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
+      case 4
+          speed = 3;
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
+      case 5
+          radius = 40;
+          color1 = 'red';
+          color2 = 'blue';
+      case 6
+          color1 = 'red';
+          color2 = 'blue';
+      case 7
+          color2 = 'blue';
   end
 
   AssertOpenGL;
@@ -60,46 +101,91 @@ function [] = balls(lag, cond, speed, radius)
       vertbound = 300;
       horizbound = 500;
       
+      switch color1
+          case 'blue'
+              col1 = blue;
+          case 'green'
+              col1 = green;
+          case 'red'
+              col1 = red;
+          case 'white'
+              col1 = white;
+      end
+      
+      switch color2
+          case 'blue'
+              col2 = blue;
+          case 'green'
+              col2 = green;
+          case 'red'
+              col2 = red;
+          case 'white'
+              col2 = white;
+      end
+      
+      offset = 40;
+      
       %vertical versus horizontal
-      if strcmp(cond, 'cause')
-          firstBallStart = [-horizbound, 0];
-          secondBallStart = [0,0];
-          change = [speed; 0; speed; 0];
-      elseif strcmp(cond, 'vert')
-          firstBallStart = [0,-vertbound];
-          secondBallStart = [0,0];
-          change = [0; speed; 0; speed];
-      elseif strcmp(cond, 'no-cause')
-          firstBallStart = [-horizbound, -vertbound];
-          secondBallStart = [horizbound,0];
-          change = [speed; 0; speed; 0];
+      switch cond
+          case 'cause'
+             firstBallStart = [-horizbound, 0];
+             secondBallStart = [offset,0];
+            change = [speed; 0; speed; 0];
+          case 'vert'
+              firstBallStart = [0,-vertbound];
+              secondBallStart = [0,offset];
+              change = [0; speed; 0; speed];
+          case 'vert-switch'
+              firstBallStart = [0,-vertbound];
+              secondBallStart = [0,offset];
+              change = [0; speed; 0; speed];
+          case 'no-cause'
+              firstBallStart = [-horizbound, -vertbound];
+              secondBallStart = [horizbound,0];
+              change = [speed; 0; speed; 0];
+          case 'reverse'
+              firstBallStart = [-horizbound, 0];
+              secondBallStart = [horizbound,0];
+              change = [speed; 0; speed; 0];
+              cond = 'no-cause';
       end
       
       nframes = 600; % number of animation frames in loop
       
       firstBallCoord = getCoord(center, firstBallStart, radius);
       secondBallCoord = getCoord(center, secondBallStart, radius);
-      ghostSecondBallCoord = getCoord(center, [0,0], radius);
+      ghostSecondBallCoord = getCoord(center, [offset,0], radius);
+      
+      Screen('FillOval', w, uint8(col1), firstBallCoord);
+      Screen('FillOval', w, uint8(col2), secondBallCoord);
+      Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
+
+      vbl=Screen('Flip', w, vbl + (waitframes-0.5)*ifi);
+      KbStrokeWait;
       
       hasHit = false;
       lagCounter = 0;
+      justHit = 2;
       
+      %waituntilspacepress;
       % --------------
       % animation loop
       % --------------
       for i = 1:nframes
-          if (i>10)
+          if (i>0)
               noCause = strcmp(cond, 'no-cause');
+              %vertSwitch = strcmp(cond, 'vert-switch');
               beforeMidPoint = abs(secondBallCoord(1) - ghostSecondBallCoord(1)) < speed;
               inBounds = inbounds(secondBallCoord, vertbound, horizbound, center, radius);
-              if ~(noCause && beforeMidPoint) && inBounds
+              if ~(noCause && beforeMidPoint) && inBounds && (i>delay)
                   if (hasHit == false)
                       firstBallCoord = firstBallCoord + change;
-                      vertCond = strcmp(cond, 'vert');
-                      vertTouch = abs(firstBallCoord(4) - secondBallCoord(2)) < speed;
-                      horizTouch = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed;
+                      vertCond = strcmp(cond, 'vert') || strcmp(cond, 'vert-switch');
+                      vertTouch = abs(firstBallCoord(4) - secondBallCoord(2)) < speed + gap;
+                      horizTouch = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed + gap;
                       if ((vertCond && vertTouch) || (~vertCond && horizTouch))
                           hasHit = true;
+                          justHit = 0;
                       end
                   else
                       lagCounter = lagCounter + 1;
@@ -112,8 +198,15 @@ function [] = balls(lag, cond, speed, radius)
                       end
                   end
               end
-              Screen('FillOval', w, uint8(red), firstBallCoord);
-              Screen('FillOval', w, uint8(blue), secondBallCoord);
+              %if (vertSwitch && justHit == 1)
+              %    old1 = col1;
+              %    old2 = col2;
+              %    col1 = old2;
+              %    col2 = old1;
+              %end
+              justHit = justHit + 1;
+              Screen('FillOval', w, uint8(col1), firstBallCoord);
+              Screen('FillOval', w, uint8(col2), secondBallCoord);
               Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
           end;
           [mx, my, buttons]=GetMouse(screenNumber);
