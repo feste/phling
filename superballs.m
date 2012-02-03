@@ -1,6 +1,6 @@
-function [] = superballs()
+function [] = superballs(subjectNo)
 
-% to do: 
+% to do:
 %   switch colors when they pass going towards each other (vertical)
 %   center no-cause balls
 %   spacebar to record segmentations
@@ -14,75 +14,78 @@ function [] = superballs()
 %   'no-cause', and 'vert'.
 % speed and radius are optional arguments for the disks.
 
-  AssertOpenGL;
-  try
-      waitframes = 1;
-      doublebuffer=1;
-      screens=Screen('Screens');
-      screenNumber=max(screens);
-      fix_r = 10; % radius of fixation point (pixels)
-      
-      [w, rect] = Screen('OpenWindow', screenNumber, 0,[], 32, doublebuffer+1);
-      
-      % Enable alpha blending with proper blend-function. We need it
-      % for drawing of smoothed points:
-      Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      [center(1), center(2)] = RectCenter(rect);
-      fps=Screen('FrameRate', w);      % frames per second
-      ifi=Screen('GetFlipInterval', w);
-      if fps==0
-          fps=1/ifi;
-      end;
-      
-      black = BlackIndex(w);
-      white = WhiteIndex(w);
-      red = [255 0 0];
-      blue = [0 0 255];
-      green = [0 255 0];
-      HideCursor;	% Hide the mouse cursor
-      Priority(MaxPriority(w));
-      
-      % Do initial flip...
-      vbl=Screen('Flip', w);
-      
-      vertbound = 300;
-      horizbound = 500;
-      
-      velocity = 3;
-      radius = 40;
-      gap = 0;
-      delayBeforeStart = 10;
-      
-      offset = 40;
-      
-      nframes = 500; % number of animation frames in loop
-      
-      
-      %***************PUT TRIAL INFORMATION HERE***********************
-      %this can be made random later.  maybe we can make a function for
-      %generating trials
-      trials = {0, 'cause', red, blue;
-          0, 'reverse', white, green};
-      %***************END TRIAL INFORMATION****************************
-
-      numtrials = size(trials,1);  
-      for t=1:numtrials
-          lag = trials{t,1};
-          cond = trials{t,2};
-          col1 = trials{t,3};
-          col2 = trials{t,4};
-      littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, horizbound, vbl, center, ...
-          waitframes, lag, gap, cond, delayBeforeStart, velocity, radius, col1, col2);
-      end
-      
-      waituntilspacepress
-      
-      Priority(0);
-      ShowCursor;
-      Screen('CloseAll');
-  catch
-      Priority(0);
-      ShowCursor;
-      Screen('CloseAll');
-  end
+AssertOpenGL;
+try
+    waitframes = 1;
+    doublebuffer=1;
+    screens=Screen('Screens');
+    screenNumber=max(screens);
+    fix_r = 10; % radius of fixation point (pixels)
+    
+    [w, rect] = Screen('OpenWindow', screenNumber, 0,[], 32, doublebuffer+1);
+    
+    % Enable alpha blending with proper blend-function. We need it
+    % for drawing of smoothed points:
+    Screen('BlendFunction', w, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    [center(1), center(2)] = RectCenter(rect);
+    fps=Screen('FrameRate', w);      % frames per second
+    ifi=Screen('GetFlipInterval', w);
+    if fps==0
+        fps=1/ifi;
+    end;
+    
+    black = BlackIndex(w);
+    white = WhiteIndex(w);
+    red = [255 0 0];
+    blue = [0 0 255];
+    green = [0 255 0];
+    HideCursor;	% Hide the mouse cursor
+    Priority(MaxPriority(w));
+    
+    % Do initial flip...
+    vbl=Screen('Flip', w);
+    
+    vertbound = 300;
+    horizbound = 500;
+    
+    velocity = 3;
+    radius = 40;
+    gap = 0;
+    delayBeforeStart = 10;
+    
+    offset = 40;
+    
+    nframes = 450; % number of animation frames in loop
+    
+    
+    %***************PUT TRIAL INFORMATION HERE***********************
+    %this can be made random later.  maybe we can make a function for
+    %generating trials
+    trials = {0, 'cause', red, blue;
+        0, 'reverse', white, green};
+    %***************END TRIAL INFORMATION****************************
+    
+    %dataFile=fopen(sprintf('data.txt'),'a');
+    %fprintf(dataFile, 'date\tsubj\tdisplay\tlag\tcause');
+    numtrials = size(trials,1);
+    for t=1:numtrials
+        lag = trials{t,1};
+        cond = trials{t,2};
+        col1 = trials{t,3};
+        col2 = trials{t,4};
+        littleballs(subjectNo, doublebuffer, ifi, w, nframes, offset, ...
+            vertbound, horizbound, vbl, center, waitframes, lag, gap, ...
+            cond, delayBeforeStart, velocity, radius, col1, col2);
+    end
+    
+    waituntilspacepress
+    
+    Priority(0);
+    ShowCursor;
+    Screen('CloseAll');
+catch
+    Priority(0);
+    ShowCursor;
+    Screen('CloseAll');
+end
 end

@@ -1,5 +1,8 @@
-function [] = littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, horizbound, vbl, center, ...
-    waitframes, lag, gap, cond, delay, speed, radius, col1, col2)
+function [] = littleballs(subjectNo, doublebuffer, ifi, w, nframes, ...
+    offset, vertbound, horizbound, vbl, center, waitframes, lag, gap, ...
+    cond, delay, speed, radius, col1, col2)
+
+white = WhiteIndex(w);
 
 %fprintf('you made it to littleballs\n');
 % to do:
@@ -15,6 +18,9 @@ function [] = littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, hori
 % cond is the condition.  so far i have made the conditions 'cause',
 %   'no-cause', and 'vert'.
 % speed and radius are optional arguments for the disks.
+
+printcond = cond;
+
 switch cond
     case 'cause'
         firstBallStart = [-horizbound, 0];
@@ -48,15 +54,16 @@ ghostSecondBallCoord = getCoord(center, [offset,0], radius);
 
 Screen('FillOval', w, uint8(col1), firstBallCoord);
 Screen('FillOval', w, uint8(col2), secondBallCoord);
-fprintf('ovals filled\n');
+Screen('DrawText', w, 'Press any button to continue.', 270, 180, white);
+%fprintf('ovals filled\n');
 Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
 
 %fprintf('some drawing happened\n');
 
 vbl=Screen('Flip', w, vbl + (waitframes-0.5)*ifi);
-fprintf('past vbl\n');
+%fprintf('past vbl\n');
 KbStrokeWait;
-fprintf('past kb\n');
+%fprintf('past kb\n');
 
 hasHit = false;
 lagCounter = 0;
@@ -111,35 +118,64 @@ for i = 1:nframes
         Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
         %fprintf('some stuff has been drawn\n');
     end;
-%    [mx, my, buttons]=GetMouse(screenNumber);
-%    if KbCheck | any(buttons) % break out of loop
-%        break;
-%      end;
+    
+    %    [mx, my, buttons]=GetMouse(screenNumber);
+    %    if KbCheck | any(buttons) % break out of loop
+    %        break;
+    %      end;
     if (doublebuffer==1)
         vbl=Screen('Flip', w, vbl + (waitframes-0.5)*ifi);
     end;
-%    fprintf('done with first it');
+    %    fprintf('done with first it');
 end
+
+%QUESTION GOES HERE
+dataFile=fopen(sprintf('data.txt'),'a');
+Screen(w,'fillrect',0);
+Screen('DrawText', w, 'F means cause.  J means no cause.', 270, 180, white);
+Screen('Flip',w);
+% Wait for the user to input something meaningful
+inLoop=true;
+while inLoop
+    [keyIsDown,finish,keyCode]=KbCheck;
+    if keyIsDown
+        keyCode = find(keyCode);
+        if (42 == keyCode) || (keyCode == 45)
+            inLoop=false;
+            switch keyCode
+                case 42
+                    response = '+';
+                case 45
+                    response = '-';
+            end
+            fprintf(dataFile, '\n%s\t%i\t%s\t%i\t%s',date, subjectNo,printcond,lag,response);
+        else
+            inLoop=true;
+        end
+    end
+end
+%END QUESTION
+
 end
 
 function coordinates = getCoord(center, ball_coord, radius)
-  coordinates = [center(1) + ball_coord(1) - radius;
-                 center(2) + ball_coord(2) - radius;
-                 center(1) + ball_coord(1) + radius;
-                 center(2) + ball_coord(2) + radius];
+coordinates = [center(1) + ball_coord(1) - radius;
+    center(2) + ball_coord(2) - radius;
+    center(1) + ball_coord(1) + radius;
+    center(2) + ball_coord(2) + radius];
 end
 
 function bool = inbounds(coord, vertbound, horizbound, center, radius)
 
-  rightbound = -horizbound + center(1);
-  leftbound = horizbound + center(1);
-  topbound = -vertbound + center(2);
-  bottombound = vertbound + center(2);
-  
-  right = coord(1) + radius >= rightbound;
-  left = coord(3) - radius <= leftbound;
-  top = coord(2) + radius >= topbound;
-  bottom = coord(4) - radius <= bottombound;
-  
-  bool = right && left && top && bottom;
+rightbound = -horizbound + center(1);
+leftbound = horizbound + center(1);
+topbound = -vertbound + center(2);
+bottombound = vertbound + center(2);
+
+right = coord(1) + radius >= rightbound;
+left = coord(3) - radius <= leftbound;
+top = coord(2) + radius >= topbound;
+bottom = coord(4) - radius <= bottombound;
+
+bool = right && left && top && bottom;
 end
