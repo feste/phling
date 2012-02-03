@@ -1,7 +1,7 @@
 function [] = littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, horizbound, vbl, center, ...
     waitframes, lag, gap, cond, delay, speed, radius, col1, col2)
 
-fprintf('you made it to littleballs\n');
+%fprintf('you made it to littleballs\n');
 % to do:
 %   switch colors when they pass going towards each other (vertical)
 %   center no-cause balls

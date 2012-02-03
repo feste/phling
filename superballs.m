@@ -48,15 +48,32 @@ function [] = superballs()
       vertbound = 300;
       horizbound = 500;
       
+      velocity = 3;
+      radius = 40;
+      gap = 0;
+      delayBeforeStart = 10;
+      
       offset = 40;
       
       nframes = 500; % number of animation frames in loop
       
-      littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, horizbound, vbl, center, ...
-          waitframes, 0, 0, 'cause', 0, 3, 40, red, blue);
       
+      %***************PUT TRIAL INFORMATION HERE***********************
+      %this can be made random later.  maybe we can make a function for
+      %generating trials
+      trials = {0, 'cause', red, blue;
+          0, 'reverse', white, green};
+      %***************END TRIAL INFORMATION****************************
+
+      numtrials = size(trials,1);  
+      for t=1:numtrials
+          lag = trials{t,1};
+          cond = trials{t,2};
+          col1 = trials{t,3};
+          col2 = trials{t,4};
       littleballs(doublebuffer, ifi, w, nframes, offset, vertbound, horizbound, vbl, center, ...
-          waitframes, 0, 0, 'reverse', 0, 3, 40, white, green);
+          waitframes, lag, gap, cond, delayBeforeStart, velocity, radius, col1, col2);
+      end
       
       waituntilspacepress
       
@@ -67,6 +84,5 @@ function [] = superballs()
       Priority(0);
       ShowCursor;
       Screen('CloseAll');
-      fprintf('you are in catch now\n');
   end
 end
