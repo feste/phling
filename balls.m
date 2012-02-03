@@ -4,6 +4,7 @@ function [] = balls(lag, gap, cond, delay, speed, radius, color1, color2)
 %   switch colors when they pass going towards each other (vertical)
 %   center no-cause balls
 %   spacebar to record segmentations
+%	run multiple displays, one after the other (multiple trials in experiment)
 
 % delay is number of frames before movement starts
 % gap is the number of pixels that separate the balls
@@ -18,53 +19,30 @@ function [] = balls(lag, gap, cond, delay, speed, radius, color1, color2)
     error('myfuns:somefun2:TooManyInputs', ...
         'lag, speed, radius');
   end
-  
   % Fill in unset optional values.
-  switch nargin
-      case 0
-          lag = 0;
-          gap = 0;
-          cond = 'cause';
-          delay = 50;
-          speed = 3;
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 1
-          gap = 0;
-          cond = 'cause';
-          delay = 50;
-          speed = 3;
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 2
-          cond = 'cause';
-          delay = 50;
-          speed = 3;
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 3
-          delay = 50;
-          speed = 3;
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 4
-          speed = 3;
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 5
-          radius = 40;
-          color1 = 'red';
-          color2 = 'blue';
-      case 6
-          color1 = 'red';
-          color2 = 'blue';
-      case 7
-          color2 = 'blue';
+  if nargin < 8
+      color2 = 'blue';
+  end
+  if nargin < 7
+      color1 = 'red';
+  end
+  if nargin < 6
+      radius = 40;
+  end
+  if nargin < 5
+      speed = 3;
+  end
+  if nargin < 4
+      delay = 50;
+  end
+  if nargin < 3
+      cond = 'cause';
+  end
+  if nargin < 2
+      gap = 0;
+  end
+  if nargin < 1
+      lag = 0;
   end
 
   AssertOpenGL;
