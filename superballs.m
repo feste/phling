@@ -55,14 +55,32 @@ try
     
     offset = 40;
     
-    nframes = 450; % number of animation frames in loop
+    nframes = 1230/velocity + delayBeforeStart; % number of animation frames in loop
     
     
     %***************PUT TRIAL INFORMATION HERE***********************
     %this can be made random later.  maybe we can make a function for
-    %generating trials
-    trials = {0, 'cause', red, blue;
-        0, 'reverse', white, green};
+    fprintf('starting to initialize trials')
+    lags = [30 50 70 90 110 130 150 170];
+    trials = cell(64, 4);
+    c = 1;
+    for lag=lags
+        for i=1:5  %cause: 5 trials per lag 
+            trials{c, 1} = lag;
+            trials{c, 2} = 'cause';
+            trials{c, 3} = red;
+            trials{c, 4} = blue;
+            c = c + 1;
+        end
+        for i=1:3   %reverse: 3 trials per lag
+            trials{c, 1} = lag;
+            trials{c, 2} = 'reverse';
+            trials{c, 3} = red;
+            trials{c, 4} = blue;
+            c = c + 1;
+        end
+    end
+    trials = trials(randperm(length(trials)),:);
     %***************END TRIAL INFORMATION****************************
     
     %dataFile=fopen(sprintf('data.txt'),'a');

@@ -54,7 +54,7 @@ ghostSecondBallCoord = getCoord(center, [offset,0], radius);
 
 Screen('FillOval', w, uint8(col1), firstBallCoord);
 Screen('FillOval', w, uint8(col2), secondBallCoord);
-Screen('DrawText', w, 'Press any button to continue.', 270, 180, white);
+%Screen('DrawText', w, 'Press any button to continue.', 540, 300, white);
 %fprintf('ovals filled\n');
 Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
 
@@ -75,7 +75,7 @@ justHit = 2;
 % --------------
 % animation loop
 % --------------
-for i = 1:nframes
+for i = 1:nframes + lag
     if (i>0)
         %fprintf('in first if\n');
         noCause = strcmp(cond, 'no-cause');
@@ -132,7 +132,8 @@ end
 %QUESTION GOES HERE
 dataFile=fopen(sprintf('data.txt'),'a');
 Screen(w,'fillrect',0);
-Screen('DrawText', w, 'F means cause.  J means no cause.', 270, 180, white);
+Screen('DrawText', w, 'F : There was cause.', 500, 400, white);
+Screen('DrawText', w, 'J : There was no cause.', 500, 460, white);
 Screen('Flip',w);
 % Wait for the user to input something meaningful
 inLoop=true;
