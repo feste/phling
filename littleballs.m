@@ -1,13 +1,82 @@
 function [] = littleballs(subjectNo, doublebuffer, ifi, w, nframes, ...
     offset, vertbound, horizbound, vbl, center, waitframes, lag, gap, ...
     cond, delay, speed, radius, col1, col2)
+    
+    %-----------VARIABLE DESCRIPTIONS---------%
+    
+    %subjectNo: goes in the subject column for each trial in the file data.txt
+    
+    %doublebuffer: i don't know. *
+    
+    %ifi: i don't know. *
 
-white = WhiteIndex(w);
+    %w: window index.  a lot of psychtoolbox functions need this to know where
+    %	to display stuff.
 
-%fprintf('you made it to littleballs\n');
-% to do:
+    %nframes
+    %	the minimum number of frames for the animation. later the 
+    %	specific lag for this trial is added to nframes to get the total number
+    %	of frames in the animation (nframes includes a delay before start of 
+    %	the animation which is defined as one of the constants in superballs.m)
+    
+    %offset
+    %	i think this is the vertical offset between the two balls
+    
+    %vertbound
+    %	the farthest from center i can go vertically on my laptop's screen **
+    
+    %horizbound
+    %	the farthest from center i can go horizontally on my laptop's screen **
+    
+    %vbl
+    %	this has something to do with the display *
+    
+    %center
+    %	coordinates for center of screen, which were found by psychtoolbox.
+    %	there are 4 coordinates in center.  they are (in this order): left, 
+    %	top, right, bottom
+    
+    %waitframes
+    %	don't know. *
+    
+    %lag
+    %	temporal lag between first ball reaching center and second ball
+    %	initiating motion
+    
+    %gap
+    %	spatial gap between the two balls along the axis of motion
+    
+    %cond
+    %	my bad variable name for which display type (in the case of experiment
+    %	1, 'cause' == experimental items and 'reverse' == filler)
+    
+    %delay
+    %	the delay before the start of the animation while the balls are still
+    %	in their initial positions on the screen
+    
+    %speed
+    %	how fast in frames per iteration the balls are moving
+    
+    %radius
+    %	radius of the balls
+    
+    %col1
+    %	color of first ball given as a 1x3 array
+    
+    %col2
+    %	color of second ball given as a 1x3 array
+
+    % * i don't know what these are because these items were in the file i 
+    %	edited to create littleballs.m.  It was a sample psychtoolbox script 
+    %	called dots.m (or something)
+    
+    % ** i should totally not have hardcoded these.  i think psychtoolbox has
+    %	ways of dealing with this, i just don't know them
+    
+    %-----------END VARIABLE DESCRIPTIONS-----------%
+
+% possible extensions:
 %   switch colors when they pass going towards each other (vertical)
-%   center no-cause balls
 %   spacebar to record segmentations
 %	run multiple displays, one after the other (multiple trials in experiment)
 
@@ -19,7 +88,11 @@ white = WhiteIndex(w);
 %   'no-cause', and 'vert'.
 % speed and radius are optional arguments for the disks.
 
-printcond = cond;
+white = WhiteIndex(w);
+
+printcond = cond;	%i change the value of cond during the script because that
+					%was easier than figuring out the booleans.  however,
+					%i want to print the original cond when i write to data.txt
 
 switch cond
     case 'cause'
@@ -160,6 +233,13 @@ end
 end
 
 function coordinates = getCoord(center, ball_coord, radius)
+%this function tells you what the left-top-right-bottom coordinates of a ball 
+%with respect to center are if you only know the x-y coordinates on the screen
+%---variables---%
+%ball_coord : x-y coordinates of the ball
+%center : center of screen
+%radius : radius of ball
+%---end variables---%
 coordinates = [center(1) + ball_coord(1) - radius;
     center(2) + ball_coord(2) - radius;
     center(1) + ball_coord(1) + radius;
@@ -167,6 +247,15 @@ coordinates = [center(1) + ball_coord(1) - radius;
 end
 
 function bool = inbounds(coord, vertbound, horizbound, center, radius)
+%checks whether a ball is inside the comfortably viewable window that i
+%hardcoded for my laptop's screen
+%---variables---%
+%coord : coordinates (left, top, right, bottom) of the ball's center
+%vertbound : hardcoded max vertical distance from center
+%horizbound : hardcoded max horizontal distance from center
+%center : found by psychtoolbox, center of screen
+%radius : radius of the ball
+%---end variables---%
 
 rightbound = -horizbound + center(1);
 leftbound = horizbound + center(1);
