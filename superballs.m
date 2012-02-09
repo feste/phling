@@ -48,7 +48,7 @@ try
     vertbound = 300;
     horizbound = 500;
     
-    velocity = 3;
+    velocity = 5;
     radius = 40;
     gap = 0;
     delayBeforeStart = 10;
@@ -59,8 +59,7 @@ try
     
     
     %***************PUT TRIAL INFORMATION HERE***********************
-    %this can be made random later.  maybe we can make a function for
-    fprintf('starting to initialize trials')
+    %fprintf('starting to initialize trials')
     lags = [30 50 70 90 110 130 150 170];
     trials = cell(64, 4);
     c = 1;
@@ -84,7 +83,7 @@ try
     %***************END TRIAL INFORMATION****************************
     
     %dataFile=fopen(sprintf('data.txt'),'a');
-    %fprintf(dataFile, 'date\tsubj\tdisplay\tlag\tcause');
+    %fprintf(dataFile, 'subj\tdisplay\tlag\tcause\tdate');
     numtrials = size(trials,1);
     for t=1:numtrials
         lag = trials{t,1};

@@ -89,6 +89,15 @@ function [] = littleballs(subjectNo, doublebuffer, ifi, w, nframes, ...
 % speed and radius are optional arguments for the disks.
 
 white = WhiteIndex(w);
+c = clock;
+
+year = num2str(c(1));
+month = num2str(c(2));
+day = num2str(c(3));
+hour = num2str(c(4));
+min = num2str(c(5));
+
+time = [year '-' month '-' day ' ' hour ':' min];
 
 printcond = cond;	%i change the value of cond during the script because that
 					%was easier than figuring out the booleans.  however,
@@ -222,7 +231,7 @@ while inLoop
                 case 45
                     response = '-';
             end
-            fprintf(dataFile, '\n%s\t%i\t%s\t%i\t%s',date, subjectNo,printcond,lag,response);
+            fprintf(dataFile, '\n%i\t%s\t%i\t%s\t%s', subjectNo, printcond, lag, response, time);
         else
             inLoop=true;
         end
