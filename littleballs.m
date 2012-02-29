@@ -136,7 +136,7 @@ ghostSecondBallCoord = getCoord(center, [offset,0], radius);
 
 Screen('FillOval', w, uint8(col1), firstBallCoord);
 Screen('FillOval', w, uint8(col2), secondBallCoord);
-%Screen('DrawText', w, 'Press any button to continue.', 540, 300, white);
+Screen('DrawText', w, 'Press any button to continue.', 540, 300, white);
 %fprintf('ovals filled\n');
 Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
 
@@ -214,8 +214,13 @@ end
 %QUESTION GOES HERE
 dataFile=fopen(sprintf('data.txt'),'a');
 Screen(w,'fillrect',0);
-Screen('DrawText', w, 'F : There was cause.', 500, 400, white);
-Screen('DrawText', w, 'J : There was no cause.', 500, 460, white);
+right = 270;
+top = 180;
+step = 40;
+Screen('TextSize', w, 14);
+Screen('DrawText', w, 'strongly disagree                      disagree                  somewhat disagree         neighter agree nor disagree         somewhat agree                    agree                         strongly agree',right - 150,top+step*8,white);
+Screen('TextSize', w, 24);
+Screen('DrawText', w, '1                       2                       3                       4                       5                       6                       7',right - 100,top+step*9,white);
 Screen('Flip',w);
 % Wait for the user to input something meaningful
 inLoop=true;
@@ -223,20 +228,16 @@ while inLoop
     [keyIsDown,finish,keyCode]=KbCheck;
     if keyIsDown
         keyCode = find(keyCode);
-        if (42 == keyCode) || (keyCode == 45)
+        if (11 <= keyCode) & (keyCode <= 17)
             inLoop=false;
-            switch keyCode
-                case 42
-                    response = '+';
-                case 45
-                    response = '-';
-            end
-            fprintf(dataFile, '\n%i\t%s\t%i\t%s\t%s', subjectNo, printcond, lag, response, time);
+            response = keyCode - 10
+            fprintf(dataFile, '\n%i\t%s\t%i\t%i\t%s', subjectNo, printcond, lag, response, time);
         else
             inLoop=true;
         end
     end
 end
+%pause(1);
 %END QUESTION
 
 end
