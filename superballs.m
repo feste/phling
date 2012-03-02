@@ -47,7 +47,13 @@ try
     vertbound = 300;
     horizbound = 500;
     
-    velocity = 5;
+    screenResWidth = 1440;
+    screenWidth = 28.575;
+    %screenWidth = 36.83;
+    speed_cmps = 40;
+    %speed_cmps = 5;
+    
+    velocity = speed_cmps*(1/fps)*(screenResWidth / screenWidth);
     radius = 40;
     gap = 0;
     delayBeforeStart = 10;
@@ -58,13 +64,19 @@ try
     
     instructions(w);
     
-    causeTrialsPerLag = 5;
-    reverseTrialsPerLag = 5;
+    %causeTrialsPerLag = 10;
+    causeTrialsPerLag = 0;
+    reverseTrialsPerLag = 10;
+    %reverseTrialsPerLag = 0;
     
     %***************PUT TRIAL INFORMATION HERE***********************
     %fprintf('starting to initialize trials')
     lags = [30 50 70 90 110 130 150 170];
-    trials = cell(causeTrialsPerLag * reverseTrialsPerLag, 4);
+    %lags = [30];
+    lags = (lags / 1000) * fps;
+    ntrials = length(lags) * (causeTrialsPerLag + reverseTrialsPerLag);
+    %trials = cell(causeTrialsPerLag * reverseTrialsPerLag, 4);
+    trials = cell(ntrials, 4);
     c = 1;
     for lag=lags
         for i=1:causeTrialsPerLag  %cause: 5 trials per lag 
@@ -124,7 +136,7 @@ Screen('DrawText', w, 'Hello!  Thank you for participating in this experiment. Y
 Screen('DrawText', w, 'presented with displays involving some action.  For each display, ',right,top+step,white);
 Screen('DrawText', w, 'please rate the extent to which you agree with the following statement.',right,top+step*2,white);
 Screen('TextSize', w, 36);
-Screen('DrawText', w, '     The motion of the red ball caused the motion of the blue ball.',right - 100,top+step*5,white);
+Screen('DrawText', w, '     The movement of the red ball caused the movement of the blue ball.',right - 150,top+step*5,white);
 Screen('TextSize', w, 14);
 Screen('DrawText', w, 'strongly disagree                      disagree                  somewhat disagree         neighter agree nor disagree         somewhat agree                    agree                         strongly agree',right - 150,top+step*8,white);
 Screen('TextSize', w, 24);

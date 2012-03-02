@@ -163,19 +163,36 @@ for i = 1:nframes + lag
         noCause = strcmp(cond, 'no-cause');
         %vertSwitch = strcmp(cond, 'vert-switch');
         beforeMidPoint = abs(secondBallCoord(1) - ghostSecondBallCoord(1)) < speed;
+          %      firstBallCoord = firstBallCoord + currentGap - gap;
+        %"before" means to the left of
+        currentGap = firstBallCoord(3) - ghostSecondBallCoord(1)
+        if noCause && currentGap < speed && currentGap > 1
+            firstBallCoord = firstBallCoord + (currentGap -1)*[1,0,1,0]';
+        end
+        if noCause && beforeMidPoint && abs(secondBallCoord(1) - ghostSecondBallCoord(1)) > 1
+            gap2 = abs(secondBallCoord(1) - ghostSecondBallCoord(1))
+            secondBallCoord = secondBallCoord - (gap2 - 1)*[1,0,1,0]';
+        end
         inBounds = inbounds(secondBallCoord, vertbound, horizbound, center, radius);
         if ~(noCause && beforeMidPoint) && inBounds && (i>delay)
+            %if currentGap < speed && currentGap > 0
+            %    firstBallCoord = firstBallCoord + [currentGap, 0, currentGap, 0];
             %fprintf('in second if\n');
+            %elseif (hasHit == false)
             if (hasHit == false)
                 %fprintf('in third if\n');
                 firstBallCoord = firstBallCoord + change;
                 vertCond = strcmp(cond, 'vert') || strcmp(cond, 'vert-switch');
                 vertTouch = abs(firstBallCoord(4) - secondBallCoord(2)) < speed + gap;
+                horizClose = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed + gap;
                 horizTouch = abs(firstBallCoord(3) - ghostSecondBallCoord(1)) < speed + gap;
-                if ((vertCond && vertTouch) || (~vertCond && horizTouch))
+                if ((vertCond && vertTouch) || (~vertCond && horizClose))
                     hasHit = true;
                     justHit = 0;
                 end
+            elseif justHit == 1
+                currentGap = abs(firstBallCoord(3) - ghostSecondBallCoord(1))*[1,0,1,0]';
+                firstBallCoord = firstBallCoord + currentGap - gap;
             else
                 lagCounter = lagCounter + 1;
                 if (lagCounter > lag)
