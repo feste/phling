@@ -1,24 +1,32 @@
-littleballs.m
-	One trial of our Experiment 1 about when people percieve cause-y sorts of
-	events.  It is called from superballs.m and all parameters are defined in
-	superballs.m.  Only the temporal lag between the first ball's arrival at
-	the center of the screen and the second ball's initiation of movement is
-	varied among conditions.  Experimental items are those in which the first
-	ball touches the second ball before the second ball starts moving.  Fillers
-	are those in which the second ball starts off at the opposite end of the 
-	screen from the first and then moves to meet the first ball.  Lots of
-	parameters can be varied, but those are the ones we're using right now.
+1. start up an internet connection
+
+2. open matlab
+
+3. navigate to this folder
+
+4. run the following command at the matlab command prompt:
+
+		physalis('<condition letter>', <subject number>)
+		
+	where condition letter is A, B, C, or D represending which condition
+	you want to run this subject on, and the subject number increases for
+	each physalis subject run regardless of condition (e.g. the first subject
+	for condition B might be input as subject 2 if there was already a 
+	subject 1 run on condition A.)
 	
-superballs.m
-	The main function for Experiment 1 about when people percieve cause-y sorts
-	of events.  It takes as a parameter only the subject number.  It prints
-	data from the experiment into a file called data.txt.
-	
-data.txt
-	Multiple rows are added to this file when superballs.m is run.  Each row
-	contains the date the experiment was run, the subject number provided to
-	the program when it ran, the trial display type (cause == experimental, 
-	reverse == filler), the temporal lag for that trial, and whether or not the 
-	participant's response indicated that they percieved cause in that trial (+
-	means they did percieve cause, - means that they did not percieve cause).
-	All subjects' data is stored in the same file.
+	conditions are:
+		A - The red ball pushed the blue ball.
+		B - The red ball gorped the blue ball.
+		C - The red ball and the blue ball touched.
+		D - The red ball and the blue ball gorped.
+
+5. that's it!  :)
+
+data will be output to the file "data.txt" where the columns are:
+	1 subject Number
+	2 condition
+	3 trial number
+	4 lag in miliseconds
+	5 gap in centimeters
+	6 response
+	7 start time for this participant's experiment
