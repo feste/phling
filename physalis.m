@@ -66,7 +66,7 @@ end
 %put trials in random order
 trials = trials(randperm(length(trials)),:);
 
-%%%%% run the experiment and record data %%%%%
+%----- run the experiment and record data ------
 dataFile=fopen(sprintf('data.txt'),'a');
 timeStart = getTime();
 %data = cell(ntrials, 1);
@@ -86,7 +86,7 @@ for t=1:length(trials)
     %responses{t} = response;
 end
 fclose(dataFile);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%------------- end run experiment --------------
 
 closing(w);
 
@@ -110,6 +110,11 @@ function [] = instructions(cond, w)
 %presents instruction screen for experiment using psychtoolbox tools.
 %this function presupposes that there is a window (w) open with 
 %psychtoolbox Screen
+%---variables---%
+%cond : condition A (push, trans), B (gorp, trans), C (touch, intrans), or
+%       condition D (gorp, intrans)
+%w : window opened by psych toolbox
+%---end variables---%
 Screen('TextFont',w,'Arial');
 Screen('TextSize',w,24);
 white = WhiteIndex(w);
@@ -146,9 +151,17 @@ end
 
 function [] = runAnimation(fLag, pGap, radius, speed, w, horizBound, ...
     center)
-%display animation for a trial of physalis
+%displays animation for a trial of physalis
+%---variables---%
+%fLag : lag in frames ROUNDED
+%pGap : gap in pixels ROUNDED
+%radius : radius of ball in pixels
+%speed : speed of ball in pixels per frame ROUNDED
+%w : window opened by psych toolbox
+%horizbound : hardcoded max horizontal distance from center
+%center : found by psychtoolbox, center of screen
+%---end variables---%
 
-%nframes = (horizBound*2)/speed; % number of animation frames in loop
 delayBeforeQuestion = 10;
 change = [speed; 0; speed; 0];
 
@@ -164,9 +177,10 @@ white = WhiteIndex(w);
 Screen('FillOval', w, uint8(red), firstBallCoord);
 Screen('FillOval', w, uint8(blue), secondBallCoord);
 Screen('DrawText', w, 'Press any button to continue.', 540, 300, white);
-Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
+ % Tell PTB that no further drawing commands will follow before
+ % Screen('Flip')
+Screen('DrawingFinished', w);
 
-%vbl=Screen('Flip', w, vbl + (waitframes-0.5)*ifi);
 Screen('Flip', w);
 KbStrokeWait;
 
@@ -205,14 +219,18 @@ while inBounds
     end
     Screen('FillOval', w, uint8(red), firstBallCoord);
     Screen('FillOval', w, uint8(blue), secondBallCoord);
-    Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
+    % Tell PTB that no further drawing commands will follow before
+    % Screen('Flip')
+    Screen('DrawingFinished', w);
     Screen('Flip', w);
 end
 
 for i = 1:delayBeforeQuestion
     Screen('FillOval', w, uint8(red), firstBallCoord);
     Screen('FillOval', w, uint8(blue), secondBallCoord);
-    Screen('DrawingFinished', w); % Tell PTB that no further drawing commands will follow before Screen('Flip')
+    % Tell PTB that no further drawing commands will follow before
+    % Screen('Flip')
+    Screen('DrawingFinished', w); 
     Screen('Flip', w);
 end
 
@@ -221,7 +239,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function response = getResponse(w)
-% show response screen and get response from participant
+% shows response screen and get response from participant
+%---variables---%
+%w : window opened by psych toolbox
+%---end variables---%
 white = WhiteIndex(w);
 Screen(w,'fillrect',0);
 Screen('TextSize', w, 32);
@@ -254,6 +275,9 @@ function [] = closing(w)
 %presents closing screen for experiment using psychtoolbox tools.
 %this function presupposes that there is a window (w) open with 
 %psychtoolbox Screen
+%---variables---%
+%w : window opened by psych toolbox
+%---end variables---%
 Screen('TextFont',w,'Arial');
 Screen('TextSize',w,24);
 white = WhiteIndex(w);
@@ -269,7 +293,7 @@ end
 
 
 %**************************************************************************
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%% end experiment parts %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %**************************************************************************
 
 
@@ -298,11 +322,12 @@ end;
 end
 
 function coordinates = getCoord(center, ball_coord, radius)
-%this function tells you what the left-top-right-bottom coordinates of a ball 
-%with respect to center are if you only know the x-y coordinates on the screen
+%this function tells you what the left-top-right-bottom coordinates of a 
+%ball with respect to center are if you only know the x-y coordinates on 
+%the screen
 %---variables---%
 %ball_coord : x-y coordinates of the ball
-%center : center of screen
+%center : center of screen (found by psych toolbox)
 %radius : radius of ball
 %---end variables---%
 coordinates = [center(1) + ball_coord(1) - radius;
@@ -316,7 +341,6 @@ function bool = inbounds(coord, horizBound, center, radius)
 %hardcoded for my laptop's screen
 %---variables---%
 %coord : coordinates (left, top, right, bottom) of the ball's center
-%vertbound : hardcoded max vertical distance from center
 %horizbound : hardcoded max horizontal distance from center
 %center : found by psychtoolbox, center of screen
 %radius : radius of the ball
@@ -332,5 +356,5 @@ bool = right && left;
 end
 
 %**************************************************************************
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% end little functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %**************************************************************************
