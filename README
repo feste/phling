@@ -1,8 +1,22 @@
+-----------------------------------------------------------------------------
+to download from github
+-----------------------------------------------------------------------------
+
+1. go to the downloads tab in the upper-right-ish area
+
+2. click "download as zip"
+
+
+
+-----------------------------------------------------------------------------
+to run an experiment
+-----------------------------------------------------------------------------
+
 1. start up an internet connection
 
 2. open matlab
 
-3. navigate to this folder
+3. navigate to the folder containing the files "physalis.m" and "data.txt"
 
 4. run the following command at the matlab command prompt:
 
@@ -21,6 +35,11 @@
 		D - The red ball and the blue ball gorped.
 
 5. that's it!  :)
+
+
+------------------------------------------------------------------------------
+output data
+------------------------------------------------------------------------------
 
 data will be output to the file "data.txt" where the columns are:
 	1 subject Number
